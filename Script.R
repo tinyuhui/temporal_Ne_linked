@@ -203,3 +203,210 @@ c(Fb_col_lower, Fb_col, Fb_col_upper)
 Nb_col_lower<-20/(2*(Fb_col_upper-0.5/s0-0.5/st))
 Nb_col_upper<-20/(2*(Fb_col_lower-0.5/s0-0.5/st))
 c(Nb_3L_col_lower, Nb_col, Nb_col_upper)
+
+#################################################
+# CHROMOSOME 3R FOR GAMBIAE
+#################################################
+# REMOVE COLUZZII DATA
+rm(s0); rm(st); 
+rm(K); rm(R); rm(Q2); rm(e); rm(x0); rm(xt); rm(w); rm(W_half); 
+rm(subset_3R_col_2012); rm(subset_3R_col_2014); rm(subset_3L_col_2012); rm(subset_3L_col_2014); 
+rm(subset_col_2012); rm(subset_col_2014); 
+rm(subset_3R_col_POS); rm(subset_3L_col_POS); rm(subset_col_POS); 
+gc(); 
+
+# LOAD GAMBIAE DATA
+load('data/gam.RData')
+ls()
+# FIND SAMPLE SIZES
+s0<-nrow(subset_3R_gam_2012)
+st<-nrow(subset_3R_gam_2014)
+c(s0, st)
+
+# NUMBER OF LOCI
+K<-ncol(subset_3R_gam_2012)
+K
+x0<-apply(subset_3R_gam_2012, 2, fsum)/(2*s0)
+xt<-apply(subset_3R_gam_2014, 2, fsum)/(2*st)
+# Fa AND CORRESPONDING Ne
+Fa_3R_gam<-fsum((x0-xt)^2/(x0*(1-x0)))/K
+Na_3R_gam<-20/(2*(Fa_3R_gam-0.5/s0-0.5/st))
+c(Fa_3R_gam, Na_3R_gam)
+# Fb AND CORRESPONDING Ne
+Fb_3R_gam<-fsum((x0-xt)^2)/fsum(x0*(1-x0))
+Nb_3R_gam<-20/(2*(Fb_3R_gam-0.5/s0-0.5/st))
+c(Fb_3R_gam, Nb_3R_gam)
+
+# CALCULATE R MATRIX AND EIGENVALUES FOR Fa
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_3R_gam_2012, subset_3R_gam_POS, 0.014, Na_3R_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(R, only.values=TRUE)
+gc()
+
+# C.I. WITH Fa
+gen_Q2<-function(eigenvalues)
+{
+working_eigenvalues<-eigenvalues[eigenvalues>0]
+working_eigenvalues<-working_eigenvalues*sum(eigenvalues)/sum(working_eigenvalues)
+dyn.load('cpp/r_matrix.dll')
+y<-.Call('generate_Q2', working_eigenvalues, 50000)
+dyn.unload('cpp/r_matrix.dll')
+return(y)
+}
+# EMPIRICAL Q2 DISTRIBUTION. YOU WILL GET A SLIGHTLY DIFFERENT Q2 BECAUSE OF RANDOMNESS
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fa_3R_gam_lower<-K*Fa_3R_gam/quantile(Q2, 0.975)
+Fa_3R_gam_upper<-K*Fa_3R_gam/quantile(Q2, 0.025)
+c(Fa_3R_gam_lower, Fa_3R_gam, Fa_3R_gam_upper)
+# C.I. FOR Ne
+Na_3R_gam_lower<-20/(2*(Fa_3R_gam_upper-0.5/s0-0.5/st))
+Na_3R_gam_upper<-20/(2*(Fa_3R_gam_lower-0.5/s0-0.5/st))
+c(Na_3R_gam_lower, Na_3R_gam, Na_3R_gam_upper)
+
+# C.I. WITH Fb
+rm(R); rm(Q2); rm(e); gc(); 
+w<-x0*(1-x0)/fsum(x0*(1-x0))
+W_half<-diag(sqrt(w))
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_3R_gam_2012, subset_3R_gam_POS, 0.014, Nb_3R_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(K*W_half%*%R%*%t(W_half), only.values=TRUE)
+gc()
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fb_3R_gam_lower<-K*Fb_3R_gam/quantile(Q2, 0.975)
+Fb_3R_gam_upper<-K*Fb_3R_gam/quantile(Q2, 0.025)
+c(Fb_3R_gam_lower, Fb_3R_gam, Fb_3R_gam_upper)
+# C.I. FOR Ne
+Nb_3R_gam_lower<-20/(2*(Fb_3R_gam_upper-0.5/s0-0.5/st))
+Nb_3R_gam_upper<-20/(2*(Fb_3R_gam_lower-0.5/s0-0.5/st))
+c(Nb_3R_gam_lower, Nb_3R_gam, Nb_3R_gam_upper)
+
+#################################################
+# CHROMOSOME 3L FOR GAMBIAE
+#################################################
+# CLEAN UP VARIABLES
+rm(K); rm(R); rm(Q2); rm(e); rm(x0); rm(xt); rm(w); rm(W_half); gc(); 
+# THEN REPEAT THE SAME ANALYSIS WITH 3L DATA
+K<-ncol(subset_3L_gam_2012)
+K
+x0<-apply(subset_3L_gam_2012, 2, fsum)/(2*s0)
+xt<-apply(subset_3L_gam_2014, 2, fsum)/(2*st)
+# Fa AND CORRESPONDING Ne
+Fa_3L_gam<-fsum((x0-xt)^2/(x0*(1-x0)))/K
+Na_3L_gam<-20/(2*(Fa_3L_gam-0.5/s0-0.5/st))
+c(Fa_3L_gam, Na_3L_gam)
+# Fb AND CORRESPONDING Ne
+Fb_3L_gam<-fsum((x0-xt)^2)/fsum(x0*(1-x0))
+Nb_3L_gam<-20/(2*(Fb_3L_gam-0.5/s0-0.5/st))
+c(Fb_3L_gam, Nb_3L_gam)
+
+# CALCULATE R MATRIX AND EIGENVALUES FOR Fa
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_3L_gam_2012, subset_3L_gam_POS, 0.014, Na_3L_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(R, only.values=TRUE)
+gc()
+
+# C.I. WITH Fa
+# EMPIRICAL Q2 DISTRIBUTION. YOU WILL GET A SLIGHTLY DIFFERENT Q2 BECAUSE OF RANDOMNESS
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fa_3L_gam_lower<-K*Fa_3L_gam/quantile(Q2, 0.975)
+Fa_3L_gam_upper<-K*Fa_3L_gam/quantile(Q2, 0.025)
+c(Fa_3L_gam_lower, Fa_3L_gam, Fa_3L_gam_upper)
+# C.I. FOR Ne
+Na_3L_gam_lower<-20/(2*(Fa_3L_gam_upper-0.5/s0-0.5/st))
+Na_3L_gam_upper<-20/(2*(Fa_3L_gam_lower-0.5/s0-0.5/st))
+c(Na_3L_gam_lower, Na_3L_gam, Na_3L_gam_upper)
+
+# CALCULATE R MATRIX AND EIGENVALUES FOR Fb
+rm(R); rm(Q2); rm(e); gc(); 
+w<-x0*(1-x0)/fsum(x0*(1-x0))
+W_half<-diag(sqrt(w))
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_3L_gam_2012, subset_3L_gam_POS, 0.014, Nb_3L_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(K*W_half%*%R%*%t(W_half), only.values=TRUE)
+gc()
+
+# C.I. WITH Fb
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fb_3L_gam_lower<-K*Fb_3L_gam/quantile(Q2, 0.975)
+Fb_3L_gam_upper<-K*Fb_3L_gam/quantile(Q2, 0.025)
+c(Fb_3L_gam_lower, Fb_3L_gam, Fb_3L_gam_upper)
+# C.I. FOR Ne
+Nb_3L_gam_lower<-20/(2*(Fb_3L_gam_upper-0.5/s0-0.5/st))
+Nb_3L_gam_upper<-20/(2*(Fb_3L_gam_lower-0.5/s0-0.5/st))
+c(Nb_3L_gam_lower, Nb_3L_gam, Nb_3L_gam_upper)
+
+#################################################
+# 3R AND 3L COMBINED FOR GAMBIAE
+#################################################
+rm(K); rm(R); rm(Q2); rm(e); rm(x0); rm(xt); rm(w); rm(W_half); gc(); 
+# COMBINE 3R AND 3L
+subset_gam_2012<-cbind(subset_3R_gam_2012, subset_3L_gam_2012)
+subset_gam_2014<-cbind(subset_3R_gam_2014, subset_3L_gam_2014)
+# COMBINE POS
+subset_gam_POS<-c(subset_3R_gam_POS, 53200195+subset_3L_gam_POS)
+mode(subset_gam_2012)<-'integer'
+mode(subset_gam_2014)<-'integer'
+mode(subset_gam_POS)<-'integer'
+# TOTAL LOCI NUMBER
+K<-ncol(subset_gam_2012)
+K
+x0<-apply(subset_gam_2012, 2, fsum)/(2*s0)
+xt<-apply(subset_gam_2014, 2, fsum)/(2*st)
+# THE TWO F STATISTICS
+Fa_gam<-fsum((x0-xt)^2/(x0*(1-x0)))/K
+Na_gam<-20/(2*(Fa_gam-0.5/s0-0.5/st))
+c(Fa_gam, Na_gam)
+Fb_gam<-fsum((x0-xt)^2)/fsum(x0*(1-x0))
+Nb_gam<-20/(2*(Fb_gam-0.5/s0-0.5/st))
+c(Fb_gam, Nb_gam)
+
+# CALCULATE R MATRIX AND EIGENVALUES FOR Fa
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_gam_2012, subset_gam_POS, 0.014, Na_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(R, only.values=TRUE)
+gc()
+
+# C.I. WITH Fa
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fa_gam_lower<-K*Fa_gam/quantile(Q2, 0.975)
+Fa_gam_upper<-K*Fa_gam/quantile(Q2, 0.025)
+c(Fa_gam_lower, Fa_gam, Fa_gam_upper)
+# C.I. FOR Ne
+Na_gam_lower<-20/(2*(Fa_gam_upper-0.5/s0-0.5/st))
+Na_gam_upper<-20/(2*(Fa_gam_lower-0.5/s0-0.5/st))
+c(Na_gam_lower, Na_gam, Na_gam_upper)
+
+# CALCULATE R MATRIX AND EIGENVALUES FOR Fb
+rm(R); rm(Q2); gc(); 
+w<-x0*(1-x0)/fsum(x0*(1-x0))
+W_half<-diag(sqrt(w))
+dyn.load('cpp/r_matrix.dll')
+R<-.Call('cal_corr_matrix_unphased', subset_gam_2012, subset_gam_POS, 0.014, Nb_gam, s0, st, 20, 20)
+dyn.unload('cpp/r_matrix.dll')
+e<-eigen(K*W_half%*%R%*%t(W_half), only.values=TRUE)
+gc()
+
+# C.I. WITH Fb
+Q2<-gen_Q2(e$values)
+# C.I. FOR F
+Fb_gam_lower<-K*Fb_gam/quantile(Q2, 0.975)
+Fb_gam_upper<-K*Fb_gam/quantile(Q2, 0.025)
+c(Fb_gam_lower, Fb_gam, Fb_gam_upper)
+# C.I. FOR Ne
+Nb_gam_lower<-20/(2*(Fb_gam_upper-0.5/s0-0.5/st))
+Nb_gam_upper<-20/(2*(Fb_gam_lower-0.5/s0-0.5/st))
+c(Nb_3L_gam_lower, Nb_gam, Nb_gam_upper)
+
+#################################################
+# END
+#################################################
