@@ -145,7 +145,7 @@ c(Nb_3L_col_lower, Nb_3L_col, Nb_3L_col_upper)
 #################################################
 rm(K); rm(R); rm(Q2); rm(x0); rm(xt); rm(w); rm(W_half); gc(); 
 # COMBINE 3R AND 3L
-subset_col_2012<-cbind(subset_3R_col_2012, subset_3L_col_2012)
+subset_col_2012<-cbind(subset_3R_col_2012, subset_3L_col_2012)
 subset_col_2014<-cbind(subset_3R_col_2014, subset_3L_col_2014)
 # COMBINE POS
 subset_col_POS<-c(subset_3R_col_POS, 53200195+subset_3L_col_POS)
