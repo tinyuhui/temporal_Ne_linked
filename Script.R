@@ -348,7 +348,7 @@ c(Nb_3L_gam_lower, Nb_3L_gam, Nb_3L_gam_upper)
 #################################################
 rm(K); rm(R); rm(Q2); rm(e); rm(x0); rm(xt); rm(w); rm(W_half); gc(); 
 # COMBINE 3R AND 3L
-subset_gam_2012<-cbind(subset_3R_gam_2012, subset_3L_gam_2012)
+subset_gam_2012<-cbind(subset_3R_gam_2012, subset_3L_gam_2012)
 subset_gam_2014<-cbind(subset_3R_gam_2014, subset_3L_gam_2014)
 # COMBINE POS
 subset_gam_POS<-c(subset_3R_gam_POS, 53200195+subset_3L_gam_POS)
