@@ -10,4 +10,4 @@ To compile the C source file, open ```cmd``` (Windows) or its equivalent in othe
 ```
 R CMD SHLIB r_matrix.c -fopenmp
 ```
-The flag ```-fopenmp``` is required for OpenMP parallelisation. This creates a shared object with extension ```.dll``` (Windows) or ```.so``` (Linux). 
+The flag ```-fopenmp``` is required to enable parallelisation. This creates a shared object with extension ```.dll``` (Windows) or ```.so``` (Linux). 
