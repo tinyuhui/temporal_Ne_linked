@@ -2,7 +2,7 @@
 
 This repository contains the datasets and computing codes of the accepted manuscript "Contemporary Ne estimation using temporally-spaced data with linked loci. " Molecular Ecology Resources (2021)
 
-maintained by Tin-Yu Hui <tin-yu.hui11@imperial.ac.uk>
+Uploaded by Tin-Yu Hui <tin-yu.hui11@imperial.ac.uk>, April 2021. 
 
 The two datasets ```col.RData``` and ```gam.RData``` for *An. coluzzii* and *An. gambiae* locate under the ```/data/``` folder. ```Script.R``` is the main R code to generate the results in Table 2 and Supplementary Information (Part IV). There is also a C source file ```/cpp/r_matrix.c``` which needs to be compiled before running. The compiled shared object will then be called from R. 
 
