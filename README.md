@@ -5,6 +5,8 @@ This repository contains the datasets and computing codes of the now published p
 Please use the following citation: 
 Hui, T. Y. J., Brenas, J. H., & Burt, A. (2021). Contemporary N e estimation using temporally spaced data with linked loci. Molecular Ecology Resources, 21(7), 2221-2230. 
 
+https://onlinelibrary.wiley.com/doi/full/10.1111/1755-0998.13412
+
 Uploaded by Tin-Yu Hui <tin-yu.hui11@imperial.ac.uk>, April 2021. 
 
 The two datasets ```col.RData``` and ```gam.RData``` for *An. coluzzii* and *An. gambiae* locate under the ```/data/``` folder. ```Script.R``` is the main R code to generate the results in Table 2 and Supplementary Information (Part IV). There is also a C source file ```/cpp/r_matrix.c``` which needs to be compiled before running. The compiled shared object will then be called from R. 
