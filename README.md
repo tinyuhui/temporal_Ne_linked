@@ -1,6 +1,9 @@
 # temporal_Ne_linked
 
-This repository contains the datasets and computing codes of the accepted manuscript "Contemporary Ne estimation using temporally-spaced data with linked loci. " Molecular Ecology Resources (2021)
+This repository contains the datasets and computing codes of the now published paper "Contemporary Ne estimation using temporally-spaced data with linked loci. "
+
+Please use the following citation: 
+Hui, T. Y. J., Brenas, J. H., & Burt, A. (2021). Contemporary N e estimation using temporally spaced data with linked loci. Molecular Ecology Resources, 21(7), 2221-2230. 
 
 Uploaded by Tin-Yu Hui <tin-yu.hui11@imperial.ac.uk>, April 2021. 
 
